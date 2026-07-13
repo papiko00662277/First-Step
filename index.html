@@ -234,7 +234,7 @@
 function esc(s){return (s||"").trim();}
 const API_KEY_STORAGE_KEY = "geminiApiKey";
 const TODO_STORAGE_KEY = "firstStepTodos";
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-flash-latest";
 const DEBUG_MODE = new URLSearchParams(location.search).get("debug") === "1";
 let todos = [];
 let currentDeadline = "";
@@ -385,7 +385,7 @@ function showFirstStepError(msg){
 }
 
 function calmErrorMessage(detail){
-  return DEBUG_MODE && detail ? detail : "生成に失敗しました。少し時間をおいてもう一度試してください。";
+  return detail ? ("生成に失敗しました：" + detail) : "生成に失敗しました。少し時間をおいてもう一度試してください。";
 }
 
 async function genTodosPrompt(){
