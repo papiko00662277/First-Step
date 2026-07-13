@@ -3,124 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>FirstStep ― TODOと最初の一歩</title>
+<meta name="theme-color" content="#1f2430">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FirstStep">
+<title>FirstStep ― やりたいこと と 最初の一歩</title>
 <style>
   :root{
-    --bg:#f5f6f8; --card:#ffffff; --ink:#1f2430; --sub:#5b6472;
-    --line:#e3e6ea; --accent:#3b6ef5; --accent-d:#2b54c7;
-    --good:#1f9d63; --warn:#c9742a; --soft:#eef2fe;
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2430; --sub:#6b7280;
+    --line:#e5e7eb; --accent:#3b6ef5; --accent-d:#2b54c7; --good:#1f9d63;
+    --soft:#eef2fe; --sidebar:#fbfbfc; --hover:#f2f3f5;
   }
   *{box-sizing:border-box}
   html,body{overflow-x:hidden}
   body{
     margin:0; background:var(--bg); color:var(--ink); -webkit-text-size-adjust:100%;
     font-family:-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
-    line-height:1.7; padding:24px 16px 64px;
+    line-height:1.6;
   }
-  .wrap{max-width:840px; margin:0 auto}
-  header h1{font-size:22px; margin:0 0 4px}
-  header p{margin:0 0 20px; color:var(--sub); font-size:14px}
-  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:18px}
-  label{display:block; font-weight:600; font-size:14px; margin:14px 0 6px}
-  label .opt{font-weight:400; color:var(--sub); font-size:12px; margin-left:6px}
-  input[type=text],input[type=password],textarea,select{
-    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:9px;
-    font-size:16px; font-family:inherit; background:#fcfcfd; color:var(--ink);
+  input,textarea,button,select{font-family:inherit}
+  input[type=text],input[type=password]{
+    width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:2px;
+    font-size:16px; background:#fff; color:var(--ink);
   }
-  textarea{resize:vertical; min-height:64px}
-  .row{display:flex; gap:12px; flex-wrap:wrap}
-  .row > div{flex:1; min-width:200px}
-  .hint{font-size:12px; color:var(--sub); margin-top:4px}
-  .btns{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap}
-  button{
-    border:none; border-radius:9px; padding:11px 18px; font-size:14px; font-weight:600;
-    cursor:pointer; font-family:inherit;
-  }
-  .primary{background:var(--accent); color:#fff}
+  button{border:none; border-radius:2px; cursor:pointer; font-weight:600}
+  .primary{background:var(--accent); color:#fff; padding:9px 16px; font-size:14px}
   .primary:hover{background:var(--accent-d)}
-  .ghost{background:var(--soft); color:var(--accent-d)}
-  .out{display:none}
-  .out.show{display:block}
-  .app-shell{display:none}
-  body.api-ready .app-shell{display:block}
-  .api-gate{
-    position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center;
-    padding:24px 16px; background:var(--bg);
-  }
-  .api-gate.show{display:flex}
-  .api-gate .card{width:min(100%, 460px); margin:0}
-  .api-gate h2{font-size:18px; margin:0 0 8px}
-  .api-gate p{margin:0 0 14px}
-  .api-gate a{color:var(--accent-d)}
-  .header-row{display:flex; justify-content:space-between; gap:12px; align-items:flex-start}
-  .linkbtn{background:transparent; color:var(--accent-d); padding:0; font-size:12px}
-  .view{display:none}
-  .view.show{display:block}
-  .outhead{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
-  .outhead h2{font-size:16px; margin:0}
-  #prompt,#todoPrompt{min-height:260px; font-family:"SFMono-Regular",Consolas,"Courier New",monospace; font-size:12.5px; line-height:1.6}
-  #answer{min-height:260px; white-space:pre-wrap; background:#fcfcfd; border:1px solid var(--line); border-radius:9px; padding:12px; font-size:14px}
-  .copybtn{background:var(--good); color:#fff; padding:8px 14px; font-size:13px}
-  .steps{margin:10px 0 0; padding-left:20px; color:var(--sub); font-size:13px}
-  .error{display:none; color:#b42318; background:#fff1f0; border:1px solid #ffd5d2; border-radius:9px; padding:9px 11px; font-size:13px; margin-top:12px}
+  .primary:disabled{opacity:.55; cursor:default}
+  .ghost{background:var(--soft); color:var(--accent-d); padding:8px 14px; font-size:13px}
+  .hint{font-size:12px; color:var(--sub)}
+  .error{display:none; color:#b42318; background:#fff1f0; border:1px solid #ffd5d2; border-radius:2px; padding:8px 10px; font-size:13px; margin-top:10px}
   .error.show{display:block}
-  .todo-list{margin-bottom:18px}
-  .todo-flow{position:relative}
-  .todo-node{position:relative; margin-bottom:34px}
-  .todo-node:not(:last-child)::after{
-    content:""; position:absolute; left:50%; bottom:-29px; width:2px; height:26px;
-    background:var(--accent); transform:translateX(-50%);
+
+  /* API gate */
+  .api-gate{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:24px 16px; background:var(--bg)}
+  .api-gate.show{display:flex}
+  .api-card{width:min(100%,440px); background:#fff; border:1px solid var(--line); padding:22px}
+  .api-card h2{font-size:18px; margin:0 0 8px}
+  .api-card a{color:var(--accent-d)}
+  .api-card .btns{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap}
+
+  /* layout */
+  .app-shell{display:none}
+  body.api-ready .app-shell{display:flex; min-height:100vh}
+  .sidebar{
+    width:270px; flex:none; background:var(--sidebar); border-right:1px solid var(--line);
+    display:flex; flex-direction:column; padding:16px 12px;
   }
-  .todo-node:not(:last-child)::before{
-    content:""; position:absolute; left:50%; bottom:-35px; width:10px; height:10px;
-    border-right:2px solid var(--accent); border-bottom:2px solid var(--accent);
-    transform:translateX(-50%) rotate(45deg);
-  }
-  .todo-card{margin-bottom:0; border-left:4px solid var(--accent)}
-  .todo-head{display:flex; justify-content:space-between; gap:12px; align-items:flex-start}
-  .todo-head h3{font-size:15px; margin:0}
-  .todo-note{color:var(--sub); font-size:13px; margin:6px 0 0}
-  .todo-done{display:flex; align-items:center; gap:6px; color:var(--sub); font-size:13px; white-space:nowrap; cursor:pointer}
-  .todo-done input{width:16px; height:16px}
-  .todo-card.done{border-left-color:var(--good); background:#fbfffd}
-  .todo-card.done h3,.todo-card.done .todo-note{text-decoration:line-through; color:var(--sub)}
-  .todo-card.done .todo-head h3::before{content:"✓ "; color:var(--good)}
-  details{margin-top:10px; border-top:1px dashed var(--line); padding-top:10px}
-  summary{cursor:pointer; font-weight:600; font-size:14px; color:var(--accent-d)}
+  .brand{font-size:18px; font-weight:700; padding:2px 6px 12px}
+  .newbtn{display:flex; align-items:center; gap:8px; width:100%; text-align:left; background:transparent; color:var(--ink);
+    padding:9px 10px; font-size:14px; border:1px solid var(--line)}
+  .newbtn:hover{background:var(--hover)}
+  .side-label{font-size:11px; color:var(--sub); font-weight:700; letter-spacing:.04em; padding:16px 8px 6px}
+  .goal-list{flex:1; overflow-y:auto; margin:0 -4px}
+  .goal-item{display:flex; align-items:center; gap:6px; padding:8px 8px; cursor:pointer; border-left:2px solid transparent}
+  .goal-item:hover{background:var(--hover)}
+  .goal-item.active{background:var(--soft); border-left-color:var(--accent)}
+  .goal-main{flex:1; min-width:0}
+  .goal-title{font-size:13.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .goal-sub{font-size:11px; color:var(--sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .goal-del{background:transparent; color:var(--sub); padding:2px 6px; font-size:13px; opacity:0; border:none}
+  .goal-item:hover .goal-del{opacity:1}
+  .goal-del:hover{color:#b42318}
+  .side-empty{font-size:12px; color:var(--sub); padding:10px 8px}
+
+  .main{flex:1; min-width:0; padding:22px 26px 60px}
+  .main-inner{max-width:820px; margin:0 auto}
+  .top-row{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+  .hero{font-size:28px; font-weight:800; margin:0; letter-spacing:-.01em; line-height:1.1; color:var(--ink)}
+  .hero-sub{font-size:13px; color:var(--sub); margin-top:4px; font-weight:500}
+  .linkbtn{background:transparent; color:var(--accent-d); padding:0; font-size:12px; font-weight:600; white-space:nowrap}
+  .lead{color:var(--sub); font-size:13px; margin:14px 0 18px}
+
+  /* new goal input */
+  .newgoal{display:flex; gap:8px; align-items:stretch; margin-bottom:20px; flex-wrap:wrap}
+  #newGoal{display:none}
+  .newgoal .g-goal{flex:2; min-width:200px}
+  .newgoal .g-dl{flex:1; min-width:120px}
+  .newgoal .primary{flex:none; white-space:nowrap}
+
+  .detail-title{font-size:17px; font-weight:700; margin:0 0 2px}
+  .detail-sub{font-size:12px; color:var(--sub); margin:0 0 14px}
+  .empty-note{color:var(--sub); font-size:14px; padding:30px 0}
+
+  /* TODO list (Notion-like, flat) */
+  .todo-list{border-top:1px solid var(--line)}
+  .todo-card{border-bottom:1px solid var(--line); padding:12px 4px}
+  .todo-card:hover{background:#f7f8fa}
+  .todo-head{display:flex; gap:12px; align-items:center}
+  .todo-check{width:18px; height:18px; flex:none; margin:0; cursor:pointer; accent-color:var(--good)}
+  .todo-num{color:var(--sub); font-size:14px; min-width:20px; text-align:right; font-variant-numeric:tabular-nums; user-select:none}
+  .todo-head h3{flex:1; font-size:16.5px; font-weight:500; margin:0; cursor:pointer; color:var(--ink)}
+  .todo-toggle{background:transparent; color:var(--sub); font-size:10px; padding:4px; width:20px; transition:transform .12s}
+  .todo-card.open .todo-toggle{transform:rotate(90deg)}
+  .todo-details{display:none; padding:2px 0 10px 46px}
+  .todo-card.open .todo-details{display:block}
+  .todo-note{color:var(--sub); font-size:13px; margin:0 0 12px}
+  .todo-card.done h3{text-decoration:line-through; color:var(--sub); font-weight:400}
+  .todo-card.done .todo-note{text-decoration:line-through}
+
+  details{margin-top:14px; border-top:1px dashed var(--line); padding-top:10px}
+  summary{cursor:pointer; font-weight:600; font-size:13px; color:var(--accent-d)}
   .debug-only{display:none !important}
   body.debug .debug-only{display:block !important}
-  .why{font-size:13px; color:var(--sub)}
-  .why table{width:100%; border-collapse:collapse; margin-top:8px}
-  .why th,.why td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top}
-  .why th{background:var(--soft); font-size:12px; white-space:nowrap}
-  .tag{display:inline-block; background:var(--soft); color:var(--accent-d); border-radius:6px; padding:1px 7px; font-size:11px; margin-right:4px}
-  footer{color:var(--sub); font-size:12px; text-align:center; margin-top:24px}
 
-  /* フォーカス実行画面（最初の一歩＋タイマー） */
+  /* focus screen */
   #focus{position:fixed; inset:0; background:#10141f; color:#fff; display:none; flex-direction:column;
-         align-items:center; justify-content:center; padding:28px; text-align:center; z-index:40}
+         align-items:center; justify-content:center; padding:28px; text-align:center; z-index:80}
   #focus.show{display:flex}
   #focus .prog{position:absolute; top:22px; left:0; right:0; color:#8a93a6; font-size:13px}
   #focus .stepnow{font-size:13px; color:#8a93a6; letter-spacing:.08em; margin-bottom:14px}
-  #focus .action{font-size:clamp(21px,6vw,28px); font-weight:700; line-height:1.5; max-width:620px; margin:0 auto 6px}
+  #focus .action{font-size:clamp(21px,5vw,28px); font-weight:700; line-height:1.5; max-width:640px; margin:0 auto 6px}
   #focus .est{color:#8a93a6; font-size:13px; margin-bottom:26px}
-  #focus .timer{font-size:clamp(52px,16vw,64px); font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.02em; margin:6px 0 4px}
+  #focus .timer{font-size:clamp(52px,14vw,64px); font-weight:700; font-variant-numeric:tabular-nums; margin:6px 0 4px}
   #focus .timer.done{color:#ffcf6b}
   #focus .timerlabel{color:#8a93a6; font-size:13px; min-height:20px; margin-bottom:26px}
   #focus .fbtns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
   #focus .fbtns button{padding:12px 20px; font-size:15px}
-  #focus .done-btn{background:var(--good); color:#fff}
-  #focus .add-btn{background:#2a3346; color:#cdd4e0}
-  #focus .skip-btn{background:transparent; color:#8a93a6; border:1px solid #2a3346}
+  .done-btn{background:var(--good); color:#fff}
+  .add-btn{background:#2a3346; color:#cdd4e0}
+  .skip-btn{background:transparent; color:#8a93a6; border:1px solid #2a3346}
   #focus .quit{position:absolute; top:16px; right:18px; background:transparent; color:#8a93a6; border:1px solid #2a3346; padding:7px 12px; font-size:12px}
+
+  @media (max-width:760px){
+    body.api-ready .app-shell{flex-direction:column; min-height:auto}
+    .sidebar{width:auto; border-right:none; border-bottom:1px solid var(--line); max-height:38vh}
+    .main{padding:18px 16px 56px}
+  }
 </style>
 </head>
 <body>
-<div id="apiGate" class="api-gate" aria-modal="true" role="dialog">
-  <div class="card">
+
+<!-- API key gate -->
+<div id="apiGate" class="api-gate" role="dialog" aria-modal="true">
+  <div class="api-card">
     <h2>Gemini APIキーの入力</h2>
-    <p class="hint">無料のAPIキーは <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">https://aistudio.google.com/apikey</a> で取得できます。</p>
-    <label>APIキー</label>
+    <p class="hint" style="margin:0 0 12px">無料のAPIキーは <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> で取得できます（各自ご自身のキー。他の人には共有されません）。</p>
     <input type="password" id="apiKeyInput" autocomplete="off" placeholder="Gemini APIキー">
     <div id="apiKeyError" class="error"></div>
     <div class="btns">
@@ -130,92 +148,45 @@
   </div>
 </div>
 
-<div id="appShell" class="wrap app-shell">
-  <header>
-    <div class="header-row">
-      <div>
-        <h1>FirstStep ― TODOと最初の一歩</h1>
-        <p>曖昧で大きいタスクをTODOへ分け、すぐ始められる最初の一歩を示します。</p>
+<div id="appShell" class="app-shell">
+  <!-- Sidebar: list of やりたいこと -->
+  <aside class="sidebar">
+    <div class="brand">FirstStep</div>
+    <button class="newbtn" onclick="focusNewGoal()">＋ 新しいやりたいこと</button>
+    <div class="side-label">やりたいこと</div>
+    <div id="goalList" class="goal-list"></div>
+  </aside>
+
+  <!-- Main: new-goal input + selected goal's TODO -->
+  <main class="main">
+    <div class="main-inner">
+      <div class="top-row">
+        <div>
+          <h1 class="hero">FirstStep</h1>
+          <div class="hero-sub">大きな目標を、最初の一歩に</div>
+        </div>
+        <button class="linkbtn" onclick="openApiGate()">APIキーを変更</button>
       </div>
-      <button class="linkbtn" onclick="openApiGate()">APIキーを変更</button>
-    </div>
-  </header>
+      <p class="lead">やりたいことを入れると、AIが段階に分解。各段階から2分の一歩を出せます。</p>
 
-  <main id="inputView" class="view show">
-  <div class="card">
-    <label>やりたいこと</label>
-    <textarea id="goal" placeholder="例：修論を進めたい"></textarea>
-    <div class="hint">大きいままでOK。AIが達成までの大きな段階（フェーズ）に分けます。</div>
-    <div>
-      <label>締切 <span class="opt">任意</span></label>
-      <input type="text" id="deadline" placeholder="例：今週金曜">
-      <div class="hint">空欄でも大丈夫です。入力するとTODOの順番や最初の一歩に反映します。</div>
-    </div>
-    <div id="todoError" class="error"></div>
+      <div class="newgoal" id="newGoal">
+        <input type="text" id="goalInput" class="g-goal" placeholder="やりたいこと（例：就活を進めたい）">
+        <input type="text" id="goalDeadline" class="g-dl" placeholder="期限（任意）">
+        <button class="primary" id="createBtn" onclick="genGoal()">作成</button>
+      </div>
+      <div id="createError" class="error"></div>
 
-    <div class="btns">
-      <button class="primary" id="todoGenBtn" onclick="genTodosPrompt()">TODOを作る</button>
-    </div>
-  </div>
+      <div id="detail"></div>
 
-  <input type="hidden" id="task">
+      <details class="debug-only">
+        <summary>送信プロンプト</summary>
+        <textarea id="prompt" readonly style="width:100%;min-height:200px;font-size:12px"></textarea>
+      </details>
+    </div>
   </main>
-
-  <section id="todoView" class="view">
-    <div class="card">
-      <div class="outhead">
-        <h2>TODO一覧</h2>
-        <button class="ghost" onclick="showInputView()">戻る</button>
-      </div>
-      <div class="hint">上から順に進める大枠の段階です。各段階の「最初の一歩を出す」を押すと、その段階に取りかかるための軽い一歩（2分）を示します。</div>
-    </div>
-    <div id="todoList" class="todo-list todo-flow"></div>
-    <details id="todoPromptOut" class="out card debug-only">
-      <summary>送信したTODO分解用プロンプトを見る</summary>
-      <textarea id="todoPrompt" readonly></textarea>
-    </details>
-  </section>
-
-  <section id="firstStepView" class="view">
-  <div id="out" class="card">
-    <div class="outhead">
-      <h2>最初の一歩</h2>
-      <div class="btns" style="margin-top:0">
-        <button class="ghost" onclick="showTodoView()">戻る</button>
-        <button class="copybtn" onclick="copyPrompt()" id="copybtn">回答をコピー</button>
-      </div>
-    </div>
-    <div id="answer"></div>
-    <div id="firstStepError" class="error"></div>
-
-    <details class="debug-only">
-      <summary>送信したプロンプトを見る</summary>
-      <textarea id="prompt" readonly></textarea>
-    </details>
-
-    <details class="debug-only">
-      <summary>なぜこのプロンプトにしたのか（設計意図）</summary>
-      <div class="why">
-        <p style="margin-top:10px">単純な「このタスクを分解して」では、「計画を立てる」「情報を集める」のような抽象的で動けない答えになりがちです。そこで、観察された失敗ごとに対策をプロンプトへ組み込んでいます。各工夫は CORE Rank A 以上の研究に対応づけています。</p>
-        <table>
-          <tr><th>プロンプトの部品</th><th>狙い（＝単純版の失敗への対策）</th><th>根拠</th></tr>
-          <tr><td>役割付与（先延ばし支援コーチ）</td><td>汎用的な回答ではなく、着手支援に最適化した視点を取らせる</td><td><span class="tag">CatAlyst (CHI'23)</span></td></tr>
-          <tr><td>粒度制約（動詞＋具体物・2分以内・抽象語禁止）</td><td>「整理する/考える」等の抽象ステップを禁じ、机で今すぐ始められる物理的行動に絞る</td><td><span class="tag">Break It Down (CHI'15)</span></td></tr>
-          <tr><td>Few-shot（良い例／悪い例）</td><td>良し悪しの基準を具体例で示し、出力品質を安定させる</td><td>—</td></tr>
-          <tr><td>段階分解（分解→点検→出力）</td><td>いきなり結論を出させず、内部で手順を踏ませて粗さを防ぐ</td><td><span class="tag">Break It Down (CHI'15)</span></td></tr>
-          <tr><td>自己検証ループ</td><td>出力前に「2分で着手可能か・動詞＋具体物か」をAI自身に点検・修正させる</td><td>—</td></tr>
-          <tr><td>締切の差し込み</td><td>一律でなく、その人の時間的な文脈に合わせた一歩にする</td><td><span class="tag">CatAlyst (CHI'23)</span></td></tr>
-          <tr><td>構造化された出力形式</td><td>「最初の一歩」を主役に置き、続くステップと所要時間を整理して提示</td><td>—</td></tr>
-        </table>
-      </div>
-    </details>
-  </div>
-  </section>
-
-  <footer>FirstStep minimal prototype ― Gemini APIを使って、この端末のブラウザ内で動きます。</footer>
 </div>
 
-<!-- フォーカス実行画面（最初の一歩＋タイマー） -->
+<!-- Focus (最初の一歩＋タイマー) -->
 <div id="focus">
   <div class="prog" id="prog"></div>
   <button class="quit" onclick="quitFocus()">やめる</button>
@@ -233,466 +204,225 @@
 
 <script>
 function esc(s){return (s||"").trim();}
+function $(id){return document.getElementById(id);}
+function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+
 const API_KEY_STORAGE_KEY = "geminiApiKey";
-const TODO_STORAGE_KEY = "firstStepTodos";
+const GOALS_STORAGE_KEY = "firstStepGoals";
 const GEMINI_MODEL = "gemini-flash-latest";
 const DEBUG_MODE = new URLSearchParams(location.search).get("debug") === "1";
-let todos = [];
-let currentDeadline = "";
 
-function initDebugMode(){
-  document.body.classList.toggle("debug", DEBUG_MODE);
-}
+let goals = [];
+let currentId = null;
+let openTodos = new Set();
+let newGoalMode = false;
 
-function getApiKey(){
-  try{
-    return localStorage.getItem(API_KEY_STORAGE_KEY) || "";
-  }catch(e){
-    return "";
-  }
-}
+/* ---------- API key ---------- */
+function getApiKey(){ try{ return localStorage.getItem(API_KEY_STORAGE_KEY) || ""; }catch(e){ return ""; } }
+function setApiKeyError(m){ const b=$('apiKeyError'); b.textContent=m||""; b.classList.toggle('show',!!m); }
+function openApiGate(){ $('apiKeyInput').value=getApiKey(); setApiKeyError(""); $('apiGate').classList.add('show'); document.body.classList.remove('api-ready'); setTimeout(function(){$('apiKeyInput').focus();},0); }
+function closeApiGate(){ $('apiGate').classList.remove('show'); document.body.classList.add('api-ready'); }
+function saveApiKey(){ const k=esc($('apiKeyInput').value); if(!k){ setApiKeyError("Gemini APIキーを入力してください。"); return; } try{ localStorage.setItem(API_KEY_STORAGE_KEY,k); closeApiGate(); }catch(e){ setApiKeyError("APIキーの保存に失敗しました。"); } }
+function clearApiKey(){ try{ localStorage.removeItem(API_KEY_STORAGE_KEY); }catch(e){} $('apiKeyInput').value=""; openApiGate(); setApiKeyError("保存済みのキーを削除しました。"); }
+function initApiGate(){ if(getApiKey()){ closeApiGate(); } else { openApiGate(); } }
 
-function setApiKeyError(msg){
-  const box = document.getElementById('apiKeyError');
-  box.textContent = msg || "";
-  box.classList.toggle('show', !!msg);
-}
-
-function openApiGate(){
-  const current = getApiKey();
-  document.getElementById('apiKeyInput').value = current;
-  setApiKeyError("");
-  document.getElementById('apiGate').classList.add('show');
-  document.body.classList.remove('api-ready');
-  setTimeout(function(){ document.getElementById('apiKeyInput').focus(); }, 0);
-}
-
-function closeApiGate(){
-  document.getElementById('apiGate').classList.remove('show');
-  document.body.classList.add('api-ready');
-}
-
-function saveApiKey(){
-  const key = esc(document.getElementById('apiKeyInput').value);
-  if(!key){
-    setApiKeyError("Gemini APIキーを入力してください。");
-    return;
-  }
-  try{
-    localStorage.setItem(API_KEY_STORAGE_KEY, key);
-    closeApiGate();
-  }catch(e){
-    setApiKeyError("APIキーの保存に失敗しました。ブラウザの保存設定を確認してください。");
-  }
-}
-
-function clearApiKey(){
-  try{
-    localStorage.removeItem(API_KEY_STORAGE_KEY);
-  }catch(e){}
-  document.getElementById('apiKeyInput').value = "";
-  openApiGate();
-  setApiKeyError("保存済みのAPIキーを削除しました。新しいキーを入力してください。");
-}
-
-function initApiGate(){
-  if(getApiKey()){
-    closeApiGate();
-  }else{
-    openApiGate();
-  }
-}
-
-function showInputView(){
-  document.getElementById('inputView').classList.add('show');
-  document.getElementById('todoView').classList.remove('show');
-  document.getElementById('firstStepView').classList.remove('show');
-}
-
-function showTodoView(){
-  document.getElementById('inputView').classList.remove('show');
-  document.getElementById('todoView').classList.add('show');
-  document.getElementById('firstStepView').classList.remove('show');
-  document.getElementById('todoView').scrollIntoView({behavior:"smooth", block:"start"});
-}
-
-function showFirstStepView(){
-  document.getElementById('inputView').classList.remove('show');
-  document.getElementById('todoView').classList.remove('show');
-  document.getElementById('firstStepView').classList.add('show');
-  document.getElementById('firstStepView').scrollIntoView({behavior:"smooth", block:"start"});
-}
-
+/* ---------- Gemini ---------- */
 async function callGemini(promptText, options){
   const apiKey = getApiKey();
-  if(!apiKey){
-    openApiGate();
-    throw new Error("Gemini APIキーが未保存です。APIキーを保存してからもう一度試してください。");
-  }
-
-  const body = {
-    contents: [{ parts: [{ text: promptText }] }]
-  };
-  if(options && options.json){
-    body.generationConfig = { responseMimeType: "application/json" };
-  }
-
+  if(!apiKey){ openApiGate(); throw new Error("Gemini APIキーが未保存です。"); }
+  const body = { contents: [{ parts: [{ text: promptText }] }] };
+  if(options && options.json){ body.generationConfig = { responseMimeType: "application/json" }; }
   let res;
   try{
     res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(apiKey), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
     });
-  }catch(e){
-    throw new Error("通信に失敗しました。ネットワーク接続を確認して、もう一度試してください。");
-  }
-
-  let data = null;
-  try{
-    data = await res.json();
-  }catch(e){}
-
-  if(!res.ok){
-    const message = data && data.error && data.error.message ? "（" + data.error.message + "）" : "";
-    throw new Error("Gemini APIでエラーが発生しました。APIキー、利用上限、通信状態を確認してください。" + message);
-  }
-
-  const text = data && data.candidates && data.candidates[0] &&
-    data.candidates[0].content && data.candidates[0].content.parts &&
-    data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
-  if(!text){
-    throw new Error("Geminiから回答本文を取得できませんでした。少し時間をおいてもう一度試してください。");
-  }
+  }catch(e){ throw new Error("通信に失敗しました。ネットワークを確認してください。"); }
+  let data=null; try{ data=await res.json(); }catch(e){}
+  if(!res.ok){ const m=data&&data.error&&data.error.message?"（"+data.error.message+"）":""; throw new Error("Gemini APIエラー。キー・利用上限・通信を確認してください。"+m); }
+  const text = data&&data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts&&data.candidates[0].content.parts[0]&&data.candidates[0].content.parts[0].text;
+  if(!text){ throw new Error("Geminiから回答を取得できませんでした。"); }
   return text;
 }
+function calmError(detail){ return detail ? ("失敗しました："+detail) : "失敗しました。少し時間をおいて再度お試しください。"; }
 
-function escapeHtml(s){
-  return String(s||"").replace(/[&<>"']/g, function(ch){
-    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];
-  });
-}
-
-function showTodoError(msg){
-  const box = document.getElementById('todoError');
-  box.textContent = msg || "";
-  box.classList.toggle('show', !!msg);
-}
-
-function showFirstStepError(msg){
-  const box = document.getElementById('firstStepError');
-  box.textContent = msg || "";
-  box.classList.toggle('show', !!msg);
-}
-
-function calmErrorMessage(detail){
-  return detail ? ("生成に失敗しました：" + detail) : "生成に失敗しました。少し時間をおいてもう一度試してください。";
-}
-
-async function genTodosPrompt(){
-  const goal = esc(document.getElementById('goal').value);
-  const deadline = esc(document.getElementById('deadline').value);
-  if(!goal){ alert("やりたいことを入力してください。"); return; }
-  const contextLines = deadline ? "【補足情報】\n- 締切：" + deadline + "\n\n" : "";
-
-  const prompt =
-"あなたは、大きな「やりたいこと」を、達成までの大枠の段階（フェーズ／マイルストーン）に分ける支援コーチです。\n" +
-"目的は、全体の見通しを持てるように、ゴールまでの道のりを大きな段階に区切ることです。細かい作業までは刻みません（細分化は後の工程で各段階から取り出します）。\n" +
-"\n" +
-"【やりたいこと】\n" +
-goal + "\n" +
-"\n" +
-contextLines +
-"【段階（TODO）の条件（厳守）】\n" +
-"1. 日本語で書く。\n" +
-"2. 各TODOは『まとまった段階（フェーズ）』にする。例：アプリ開発なら「1. 何を作るか決める → 2. 要件定義 → 3. 実装 → 4. リリース」。\n" +
-"3. 2分で終わるような細かい作業（例：ファイルを1つ開く、1行書く）は入れない。それは後で各段階から『最初の一歩』として取り出す。\n" +
-"4. titleは段階の名前を短く。noteはその段階で何をするかを1行で書く。\n" +
-"5. 着手する順に4〜6段階へ分ける。\n" +
-"6. 口調はやさしく、不安をあおらない。\n" +
-"\n" +
-"【出力形式】\n" +
-"次のJSON形式だけで返すこと。\n" +
-"{ \"todos\": [ { \"title\": \"...\", \"note\": \"...\" }, ... ] }\n" +
-"\n" +
-"JSONのみを返す、コードブロックや前置き・説明文なし。\n";
-
-  document.getElementById('todoPrompt').value = prompt;
-  document.getElementById('todoPromptOut').classList.add('show');
-  showTodoError("");
-
-  const btn = document.getElementById('todoGenBtn');
-  const oldText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = "TODO作成中...";
-
+/* ---------- persistence ---------- */
+function saveGoals(){ try{ localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify({goals:goals, currentId:currentId})); }catch(e){} }
+function loadGoals(){
+  let raw=""; try{ raw=localStorage.getItem(GOALS_STORAGE_KEY)||""; }catch(e){ return; }
+  if(!raw) return;
   try{
-    const text = await callGemini(prompt, {json:true});
-    let parsed;
-    try{
-      parsed = JSON.parse(text);
-    }catch(e){
-      throw new Error("GeminiのJSONを読み込めませんでした。もう一度試してください。");
+    const p=JSON.parse(raw);
+    if(p&&Array.isArray(p.goals)){
+      goals=p.goals.map(function(g){ return { id:g.id||uid(), title:esc(g.title), deadline:esc(g.deadline), todos:normalizeTodos(g.todos)||[] }; }).filter(function(g){return g.title;});
+      currentId = p.currentId && goals.some(function(g){return g.id===p.currentId;}) ? p.currentId : (goals[0]?goals[0].id:null);
     }
-
-    const nextTodos = normalizeTodos(parsed && parsed.todos);
-    if(!nextTodos){
-      throw new Error('Geminiの回答形式が合いませんでした。もう一度試してください。');
-    }
-
-    todos = nextTodos;
-    currentDeadline = deadline;
-    saveTodos();
-    renderTodos();
-    showTodoView();
-  }catch(e){
-    showTodoError(calmErrorMessage(e && e.message));
-  }finally{
-    btn.disabled = false;
-    btn.textContent = oldText;
-  }
+  }catch(e){}
 }
+function uid(){ return "g"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
-function copyTextFrom(id, btnId){
-  const ta = document.getElementById(id);
-  const text = typeof ta.value === "string" ? ta.value : ta.textContent;
-  const done = ()=>{ document.getElementById(btnId).textContent = "コピーしました ✓"; };
-  const fallback = function(){
-    const tmp = document.createElement('textarea');
-    tmp.value = text;
-    tmp.style.position = "fixed";
-    tmp.style.left = "-9999px";
-    document.body.appendChild(tmp);
-    tmp.select();
-    document.execCommand('copy');
-    document.body.removeChild(tmp);
-    done();
-  };
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(done).catch(fallback);
-  }else{
-    fallback();
-  }
-}
-
-function saveTodos(){
-  try{
-    localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify({
-      todos: todos,
-      deadline: currentDeadline
-    }));
-  }catch(e){
-    showTodoError("TODOの保存に失敗しました。ブラウザの保存設定を確認してください。");
-  }
-}
-
-function normalizeTodos(rawTodos){
-  if(!Array.isArray(rawTodos)) return null;
-  const cleaned = rawTodos.map(function(item){
-    return {
-      title: esc(item && item.title),
-      note: esc(item && item.note),
-      done: !!(item && item.done)
-    };
-  }).filter(function(item){ return item.title; });
-  return cleaned.length ? cleaned : null;
-}
-
-function renderTodos(){
-  const list = document.getElementById('todoList');
-  if(!todos.length){
-    list.innerHTML = "";
-    return;
-  }
-
-  list.innerHTML = todos.map(function(todo, i){
-    return '' +
-      '<div class="todo-node">' +
-      '<div class="card todo-card' + (todo.done ? ' done' : '') + '">' +
-        '<div class="todo-head">' +
-          '<div>' +
-            '<h3>' + escapeHtml(todo.title) + '</h3>' +
-            '<p class="todo-note">' + escapeHtml(todo.note || "このTODOから着手します。") + '</p>' +
-          '</div>' +
-          '<label class="todo-done"><input type="checkbox" data-todo-done="' + i + '"' + (todo.done ? ' checked' : '') + '>完了</label>' +
-        '</div>' +
-        '<div class="btns">' +
-          '<button class="ghost" data-first-step="' + i + '">最初の一歩を出す</button>' +
-        '</div>' +
-      '</div>' +
-      '</div>';
-  }).join("");
-
-  list.querySelectorAll('[data-todo-done]').forEach(function(input){
-    input.addEventListener('change', function(){
-      const i = Number(input.getAttribute('data-todo-done'));
-      if(todos[i]){
-        todos[i].done = input.checked;
-        saveTodos();
-        renderTodos();
-      }
-    });
-  });
-
-  list.querySelectorAll('[data-first-step]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      const i = Number(btn.getAttribute('data-first-step'));
-      if(!todos[i]) return;
-      document.getElementById('task').value = todos[i].title;
-      document.getElementById('deadline').value = currentDeadline;
-      const old = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = "考え中...";
-      gen().finally(function(){ btn.disabled = false; btn.textContent = old; });
-    });
-  });
-}
-
-function loadSavedTodos(){
-  let saved = "";
-  try{
-    saved = localStorage.getItem(TODO_STORAGE_KEY) || "";
-  }catch(e){
-    return;
-  }
-  if(!saved) return;
-
-  try{
-    const parsed = JSON.parse(saved);
-    const savedTodos = normalizeTodos(Array.isArray(parsed) ? parsed : parsed && parsed.todos);
-    if(savedTodos){
-      todos = savedTodos;
-      currentDeadline = Array.isArray(parsed) ? "" : esc(parsed && parsed.deadline);
-      document.getElementById('deadline').value = currentDeadline;
-      renderTodos();
-      showTodoView();
-    }
-  }catch(e){
-    localStorage.removeItem(TODO_STORAGE_KEY);
-  }
-}
-
-async function gen(){
-  const task = esc(document.getElementById('task').value);
-  if(!task){ alert("タスクを入力してください。"); return; }
-  const deadline = esc(document.getElementById('deadline').value);
-
-  // ---- 文脈ブロック（入力があるものだけ差し込む）----
-  let ctx = "- タスク：" + task + "\n";
-  if(deadline) ctx += "- 締切：" + deadline + "\n";
-
-  const prompt =
-"あなたは、先延ばしに悩む人の『最初の一歩』を作る専門コーチです。\n" +
-"与えられるのは、ある『段階（フェーズ）』またはタスクです。それに“今すぐ2分以内に着手できる”ところまで具体化し、その段階に取りかかるための軽い手順に落とします。\n" +
-"\n" +
-"【入力（ユーザーの状況）】\n" +
-ctx +
-"\n" +
-"【最初の一歩の条件（厳守）】\n" +
-"1. すべてのステップは「動詞＋具体物」で書く（例：床の雑誌を1冊だけ棚に戻す）。\n" +
-"2. 最初のステップ(steps[0])は、物理的に2分以内で着手できる最小の行動にする（完了不要、始められればよい）。\n" +
-"3. 「計画する／整理する／考える／準備する／調べる」等の抽象語だけのステップは禁止。必ず具体的な操作・対象にする。\n" +
-"4. ユーザーの締切があれば踏まえる。\n" +
-"\n" +
-"【あなたの作業手順（内部で実行）】\n" +
-"タスクを実行順に4〜6ステップへ分解→各ステップが『動詞＋具体物か／最初の一歩は2分で着手可能か』を自己点検し、満たさなければ書き直す→最終結果のみ出力（途中経過は出さない）。\n" +
-"\n" +
-"【出力形式】\n" +
-"次のJSONのみを返す。コードブロックや前置き・説明文は付けない。\n" +
-'{ "steps": [ { "action": "具体的な行動", "minutes": 整数(着手/実行の目安。最初は2) }, ... ], "encouragement": "着手を後押しする短い一言" }';
-
-  document.getElementById('prompt').value = prompt;
-  showFirstStepError("");
-
-  try{
-    const text = await callGemini(prompt, {json:true});
-    let parsed;
-    try{
-      parsed = JSON.parse(text);
-    }catch(e){
-      throw new Error("GeminiのJSONを読み込めませんでした。もう一度試してください。");
-    }
-    const steps = normalizeSteps(parsed && parsed.steps);
-    if(!steps){
-      throw new Error("回答の形式が合いませんでした。もう一度試してください。");
-    }
-    STEPS = steps;
-    fsMeta = { encouragement: esc(parsed && parsed.encouragement) };
-    fsIdx = 0;
-    startFocus();
-  }catch(e){
-    showTodoError(calmErrorMessage(e && e.message));
-  }
-}
-
-function copyPrompt(){
-  copyTextFrom('answer', 'copybtn');
-}
-
-// ---- フォーカス実行（最初の一歩＋タイマー）----
-function normalizeSteps(raw){
+function normalizeTodos(raw){
   if(!Array.isArray(raw)) return null;
-  const cleaned = raw.map(function(s){
-    return { action: esc(s && s.action), minutes: Math.max(1, parseInt(s && s.minutes) || 2) };
-  }).filter(function(s){ return s.action; });
-  return cleaned.length ? cleaned : null;
+  const c=raw.map(function(t){ return { title:esc(t&&t.title), note:esc(t&&t.note), done:!!(t&&t.done) }; }).filter(function(t){return t.title;});
+  return c.length?c:[];
 }
 
-let STEPS = [], fsIdx = 0, remaining = 0, tickId = null, fsMeta = {};
-function fsEl(id){ return document.getElementById(id); }
-
-function startFocus(){
-  fsEl('focus').classList.add('show');
-  showStep();
+/* ---------- goals: create / select / delete ---------- */
+function setNewGoal(on){
+  newGoalMode = on;
+  $('newGoal').style.display = on ? 'flex' : 'none';
+  $('createError').classList.remove('show');
+  if(on){ currentId=null; $('goalInput').value=""; $('goalDeadline').value=""; renderSidebar(); renderDetail(); setTimeout(function(){ $('goalInput').focus(); },0); }
 }
+function focusNewGoal(){ setNewGoal(true); }
+
+async function genGoal(){
+  const goal = esc($('goalInput').value);
+  const deadline = esc($('goalDeadline').value);
+  $('createError').classList.remove('show');
+  if(!goal){ $('createError').textContent="やりたいことを入力してください。"; $('createError').classList.add('show'); return; }
+  const ctx = deadline ? ("【補足情報】\n- 締切："+deadline+"\n\n") : "";
+  const prompt =
+"あなたは、大きな「やりたいこと」を、達成までの大枠の段階（フェーズ／マイルストーン）に分ける支援コーチです。\n"+
+"目的は、全体の見通しを持てるように、ゴールまでの道のりを大きな段階に区切ることです。細かい作業までは刻みません（細分化は各段階から後で行います）。\n\n"+
+"【やりたいこと】\n"+goal+"\n\n"+ctx+
+"【段階（TODO）の条件（厳守）】\n"+
+"1. 日本語で書く。\n"+
+"2. 各TODOは『まとまった段階（フェーズ）』にする。例：アプリ開発なら「1. 何を作るか決める → 2. 要件定義 → 3. 実装 → 4. リリース」。\n"+
+"3. 2分で終わる細かい作業（ファイルを1つ開く等）は入れない。\n"+
+"4. titleは段階の名前を短く。noteはその段階で何をするかを1行で。\n"+
+"5. 着手する順に4〜6段階へ分ける。\n"+
+"6. 口調はやさしく、不安をあおらない。\n\n"+
+"【出力形式】次のJSONのみを返す。コードブロックや前置きは付けない。\n"+
+'{ "todos": [ { "title": "...", "note": "..." }, ... ] }';
+
+  const btn=$('createBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent="作成中...";
+  try{
+    if(DEBUG_MODE) $('prompt').value=prompt;
+    const text=await callGemini(prompt,{json:true});
+    let parsed; try{ parsed=JSON.parse(text); }catch(e){ throw new Error("JSONを読み込めませんでした。"); }
+    const todos=normalizeTodos(parsed&&parsed.todos);
+    if(!todos||!todos.length){ throw new Error("回答の形式が合いませんでした。"); }
+    const g={ id:uid(), title:goal, deadline:deadline, todos:todos };
+    goals.unshift(g);
+    currentId=g.id; openTodos=new Set();
+    $('goalInput').value=""; $('goalDeadline').value="";
+    newGoalMode=false; $('newGoal').style.display='none';
+    saveGoals(); renderAll();
+  }catch(e){
+    $('createError').textContent=calmError(e&&e.message); $('createError').classList.add('show');
+  }finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+function selectGoal(id){ newGoalMode=false; $('newGoal').style.display='none'; currentId=id; openTodos=new Set(); saveGoals(); renderAll(); }
+function deleteGoal(id){
+  if(!confirm("このやりたいことを削除しますか？")) return;
+  goals=goals.filter(function(g){return g.id!==id;});
+  if(currentId===id){ currentId=goals[0]?goals[0].id:null; openTodos=new Set(); }
+  saveGoals(); renderAll();
+}
+function currentGoal(){ return goals.find(function(g){return g.id===currentId;})||null; }
+
+/* ---------- render ---------- */
+function renderAll(){ renderSidebar(); renderDetail(); }
+
+function renderSidebar(){
+  const list=$('goalList');
+  if(!goals.length){ list.innerHTML='<div class="side-empty">まだありません。右上でやりたいことを作成してください。</div>'; return; }
+  list.innerHTML=goals.map(function(g){
+    const sub=(g.deadline?("期限 "+escapeHtml(g.deadline)+" ・ "):"")+g.todos.length+"段階";
+    return '<div class="goal-item'+(g.id===currentId?' active':'')+'" data-sel="'+g.id+'">'+
+      '<div class="goal-main" data-sel="'+g.id+'">'+
+        '<div class="goal-title">'+escapeHtml(g.title)+'</div>'+
+        '<div class="goal-sub">'+sub+'</div>'+
+      '</div>'+
+      '<button class="goal-del" data-del="'+g.id+'" title="削除">🗑</button>'+
+    '</div>';
+  }).join("");
+  list.querySelectorAll('[data-sel]').forEach(function(el){ el.addEventListener('click',function(e){ if(e.target.closest('[data-del]'))return; selectGoal(el.getAttribute('data-sel')); }); });
+  list.querySelectorAll('[data-del]').forEach(function(b){ b.addEventListener('click',function(e){ e.stopPropagation(); deleteGoal(b.getAttribute('data-del')); }); });
+}
+
+function renderDetail(){
+  const d=$('detail'); const g=currentGoal();
+  if(!g){ d.innerHTML='<div class="empty-note">左の一覧からやりたいことを選ぶか、上で新しく作成してください。</div>'; return; }
+  const sub=(g.deadline?("期限："+escapeHtml(g.deadline)+" ・ "):"")+g.todos.length+"段階";
+  let html='<div class="detail-title">'+escapeHtml(g.title)+'</div><div class="detail-sub">'+sub+'</div>';
+  html+='<div class="todo-list">'+g.todos.map(function(t,i){
+    const open=openTodos.has(i);
+    return '<div class="todo-card'+(t.done?' done':'')+(open?' open':'')+'">'+
+      '<div class="todo-head">'+
+        '<input type="checkbox" class="todo-check" data-done="'+i+'"'+(t.done?' checked':'')+'>'+
+        '<span class="todo-num">'+(i+1)+'</span>'+
+        '<h3 data-toggle="'+i+'">'+escapeHtml(t.title)+'</h3>'+
+        '<button class="todo-toggle" data-toggle="'+i+'" aria-label="詳細">▶</button>'+
+      '</div>'+
+      '<div class="todo-details">'+
+        '<p class="todo-note">'+escapeHtml(t.note||"この段階から着手します。")+'</p>'+
+        '<div><button class="ghost" data-first="'+i+'">最初の一歩を出す</button></div>'+
+      '</div>'+
+    '</div>';
+  }).join("")+'</div>';
+  d.innerHTML=html;
+
+  d.querySelectorAll('[data-toggle]').forEach(function(el){ el.addEventListener('click',function(){ const i=Number(el.getAttribute('data-toggle')); if(openTodos.has(i))openTodos.delete(i); else openTodos.add(i); const c=el.closest('.todo-card'); if(c)c.classList.toggle('open'); }); });
+  d.querySelectorAll('[data-done]').forEach(function(inp){ inp.addEventListener('change',function(){ const i=Number(inp.getAttribute('data-done')); const gg=currentGoal(); if(gg&&gg.todos[i]){ gg.todos[i].done=inp.checked; saveGoals(); const c=inp.closest('.todo-card'); if(c)c.classList.toggle('done',inp.checked); renderSidebar(); } }); });
+  d.querySelectorAll('[data-first]').forEach(function(btn){ btn.addEventListener('click',function(){ const i=Number(btn.getAttribute('data-first')); const gg=currentGoal(); if(!gg||!gg.todos[i])return; const old=btn.textContent; btn.disabled=true; btn.textContent="考え中..."; genFirstStep(gg.todos[i].title, gg.deadline).finally(function(){ btn.disabled=false; btn.textContent=old; }); }); });
+}
+
+/* ---------- first step (JSON steps -> focus) ---------- */
+let STEPS=[], fsIdx=0, remaining=0, tickId=null, fsMeta={};
+
+async function genFirstStep(task, deadline){
+  let ctx="- タスク："+task+"\n"; if(deadline) ctx+="- 締切："+deadline+"\n";
+  const prompt=
+"あなたは、先延ばしに悩む人の『最初の一歩』を作る専門コーチです。\n"+
+"与えられるのは、ある『段階（フェーズ）』またはタスクです。それに“今すぐ2分以内に着手できる”ところまで具体化し、その段階に取りかかるための軽い手順に落とします。\n\n"+
+"【入力】\n"+ctx+"\n"+
+"【最初の一歩の条件（厳守）】\n"+
+"1. すべてのステップは「動詞＋具体物」で書く（例：床の雑誌を1冊だけ棚に戻す）。\n"+
+"2. 最初のステップ(steps[0])は、物理的に2分以内で着手できる最小の行動にする（完了不要、始められればよい）。\n"+
+"3. 「計画する／整理する／考える／準備する／調べる」等の抽象語だけのステップは禁止。必ず具体的な操作・対象にする。\n"+
+"4. 締切があれば踏まえる。\n\n"+
+"【内部手順】タスクを実行順に4〜6ステップへ分解→各ステップを自己点検（動詞＋具体物か／最初の一歩は2分で着手可能か）し満たさなければ書き直す→最終結果のみ出力。\n\n"+
+"【出力形式】次のJSONのみ。コードブロックや前置きは付けない。\n"+
+'{ "steps": [ { "action": "具体的な行動", "minutes": 整数(最初は2) }, ... ], "encouragement": "着手を後押しする短い一言" }';
+  try{
+    if(DEBUG_MODE) $('prompt').value=prompt;
+    const text=await callGemini(prompt,{json:true});
+    let parsed; try{ parsed=JSON.parse(text); }catch(e){ throw new Error("JSONを読み込めませんでした。"); }
+    const steps=(Array.isArray(parsed&&parsed.steps)?parsed.steps:[]).map(function(s){ return {action:esc(s&&s.action), minutes:Math.max(1,parseInt(s&&s.minutes)||2)}; }).filter(function(s){return s.action;});
+    if(!steps.length){ throw new Error("回答の形式が合いませんでした。"); }
+    STEPS=steps; fsMeta={encouragement:esc(parsed&&parsed.encouragement)}; fsIdx=0; startFocus();
+  }catch(e){
+    $('createError').textContent=calmError(e&&e.message); $('createError').classList.add('show');
+  }
+}
+
+function startFocus(){ $('focus').classList.add('show'); showStep(); }
 function showStep(){
-  const s = STEPS[fsIdx];
-  fsEl('prog').textContent = "ステップ " + (fsIdx + 1) + " / " + STEPS.length;
-  fsEl('stepnow').textContent = fsIdx === 0 ? "▶ 最初の一歩（これだけやればOK）" : "▶ 次の一歩";
-  fsEl('action').textContent = s.action;
-  fsEl('est').textContent = "目安 約" + s.minutes + "分（まずは着手できればOK）";
-  setTimer(s.minutes * 60);
+  const s=STEPS[fsIdx];
+  $('prog').textContent="ステップ "+(fsIdx+1)+" / "+STEPS.length;
+  $('stepnow').textContent=fsIdx===0?"▶ 最初の一歩（これだけやればOK）":"▶ 次の一歩";
+  $('action').textContent=s.action;
+  $('est').textContent="目安 約"+s.minutes+"分（まずは着手できればOK）";
+  setTimer(s.minutes*60);
 }
 function setTimer(sec){
-  clearInterval(tickId);
-  remaining = sec;
-  fsEl('timer').classList.remove('done');
-  fsEl('timerlabel').textContent = "";
-  renderTimer();
-  tickId = setInterval(function(){
-    remaining--;
-    if(remaining <= 0){
-      remaining = 0; renderTimer(); clearInterval(tickId); tickId = null;
-      fsEl('timer').classList.add('done');
-      fsEl('timerlabel').textContent = "⏰ 時間です。区切りがついたら「できた」を押そう";
-    }else{
-      renderTimer();
-    }
-  }, 1000);
+  clearInterval(tickId); remaining=sec; $('timer').classList.remove('done'); $('timerlabel').textContent=""; renderTimer();
+  tickId=setInterval(function(){ remaining--; if(remaining<=0){ remaining=0; renderTimer(); clearInterval(tickId); tickId=null; $('timer').classList.add('done'); $('timerlabel').textContent="⏰ 時間です。区切りがついたら「できた」を押そう"; } else renderTimer(); },1000);
 }
-function renderTimer(){
-  const m = String(Math.floor(remaining / 60)).padStart(2, '0');
-  const s = String(remaining % 60).padStart(2, '0');
-  fsEl('timer').textContent = m + ":" + s;
-}
-function addMin(){ setTimer(remaining + 60); }
-function nextStep(didIt){
-  clearInterval(tickId); tickId = null;
-  fsIdx++;
-  if(fsIdx >= STEPS.length){ finishFocus(); } else { showStep(); }
-}
-function quitFocus(){
-  clearInterval(tickId); tickId = null;
-  fsEl('focus').classList.remove('show');
-}
-function finishFocus(){
-  clearInterval(tickId); tickId = null;
-  fsEl('focus').classList.remove('show');
-  showTodoView();
-}
+function renderTimer(){ const m=String(Math.floor(remaining/60)).padStart(2,'0'), s=String(remaining%60).padStart(2,'0'); $('timer').textContent=m+":"+s; }
+function addMin(){ setTimer(remaining+60); }
+function nextStep(){ clearInterval(tickId); tickId=null; fsIdx++; if(fsIdx>=STEPS.length){ finishFocus(); } else { showStep(); } }
+function quitFocus(){ clearInterval(tickId); tickId=null; $('focus').classList.remove('show'); }
+function finishFocus(){ clearInterval(tickId); tickId=null; $('focus').classList.remove('show'); }
 
-initDebugMode();
-loadSavedTodos();
+/* ---------- init ---------- */
+document.body.classList.toggle("debug", DEBUG_MODE);
+loadGoals();
+renderAll();
+if(!goals.length){ setNewGoal(true); }
 initApiGate();
 </script>
 </body>
