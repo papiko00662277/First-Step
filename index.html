@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1f2430">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,8 +32,14 @@
   .primary:disabled{opacity:.55; cursor:default}
   .ghost{background:var(--soft); color:var(--accent-d); padding:8px 14px; font-size:13px}
   .hint{font-size:12px; color:var(--sub)}
-  .error{display:none; color:#b42318; background:#fff1f0; border:1px solid #ffd5d2; border-radius:2px; padding:8px 10px; font-size:13px; margin-top:10px}
+  .field-label{display:block; font-size:12px; font-weight:700; color:var(--sub); margin:0 0 5px}
+  .field{flex:1; min-width:160px}
+  .remember{display:flex; align-items:center; gap:7px; margin-top:10px; color:var(--sub); font-size:12px}
+  .remember input{width:15px; height:15px; margin:0}
+  .error{display:none; color:#b42318; background:#fff1f0; border:1px solid #ffd5d2; border-radius:2px; padding:8px 36px 8px 10px; font-size:13px; margin-top:10px; position:relative}
   .error.show{display:block}
+  .error-close{position:absolute; top:5px; right:7px; background:transparent; color:#b42318; padding:2px 6px; font-size:16px; line-height:1; font-weight:700}
+  .error-close:hover{background:#ffd5d2}
 
   /* API gate */
   .api-gate{position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:24px 16px; background:var(--bg)}
@@ -99,6 +105,12 @@
   .todo-details{display:none; padding:2px 0 10px 46px}
   .todo-card.open .todo-details{display:block}
   .todo-note{color:var(--sub); font-size:13px; margin:0 0 12px}
+  .todo-memo{width:100%; min-height:76px; resize:vertical; border:1px solid var(--line); border-radius:2px; padding:8px 10px; font-size:13px; line-height:1.5; color:var(--ink); background:#fff; margin:0 0 10px}
+  .memo-label{display:block; color:var(--sub); font-size:12px; font-weight:700; margin:0 0 5px}
+  .stepbar{display:flex; align-items:center; gap:8px}
+  .step-status{font-size:11px; color:var(--sub)}
+  .dev-reset{background:transparent; color:var(--sub); font-size:12px; font-weight:600; margin-left:8px; padding:4px 6px}
+  .dev-reset:hover{color:#b42318; background:#fff1f0}
   .todo-card.done h3{text-decoration:line-through; color:var(--sub); font-weight:400}
   .todo-card.done .todo-note{text-decoration:line-through}
 
@@ -109,13 +121,14 @@
 
   /* focus screen */
   #focus{position:fixed; inset:0; background:#10141f; color:#fff; display:none; flex-direction:column;
-         align-items:center; justify-content:center; padding:28px; text-align:center; z-index:80}
+         align-items:center; justify-content:center; padding:42px 28px 28px; text-align:center; z-index:80}
   #focus.show{display:flex}
-  #focus .prog{position:absolute; top:22px; left:0; right:0; color:#8a93a6; font-size:13px}
-  #focus .stepnow{font-size:13px; color:#8a93a6; letter-spacing:.08em; margin-bottom:14px}
-  #focus .action{font-size:clamp(21px,5vw,28px); font-weight:700; line-height:1.5; max-width:640px; margin:0 auto 6px}
-  #focus .est{color:#8a93a6; font-size:13px; margin-bottom:26px}
-  #focus .timer{font-size:clamp(52px,14vw,64px); font-weight:700; font-variant-numeric:tabular-nums; margin:6px 0 4px}
+  #focus .fs-task{font-size:15px; font-weight:700; color:#cbd3e1; max-width:640px; margin:0 auto 10px}
+  #focus .stepnow{font-size:13px; color:#8a93a6; letter-spacing:.08em; margin-bottom:18px}
+  #focus .action{font-size:clamp(22px,4.4vw,34px); font-weight:700; line-height:1.45; max-width:760px; margin:0 auto 12px}
+  #focus .next-hint{color:#8a93a6; font-size:15px; line-height:1.6; max-width:700px; min-height:24px; margin:0 auto 22px}
+  #focus .encouragement{color:#cbd3e1; font-size:14px; min-height:22px; margin-bottom:20px}
+  #focus .timer{font-size:clamp(52px,14vw,64px); font-weight:700; font-variant-numeric:tabular-nums; margin:8px 0 4px}
   #focus .timer.done{color:#ffcf6b}
   #focus .timerlabel{color:#8a93a6; font-size:13px; min-height:20px; margin-bottom:26px}
   #focus .fbtns{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
@@ -138,8 +151,10 @@
 <div id="apiGate" class="api-gate" role="dialog" aria-modal="true">
   <div class="api-card">
     <h2>Gemini APIキーの入力</h2>
-    <p class="hint" style="margin:0 0 12px">無料のAPIキーは <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> で取得できます（各自ご自身のキー。他の人には共有されません）。</p>
+    <p class="hint" style="margin:0 0 12px">無料のAPIキーは <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> で取得できます。公開ページではなく、自分の端末で使ってください。</p>
+    <label class="field-label" for="apiKeyInput">Gemini APIキー</label>
     <input type="password" id="apiKeyInput" autocomplete="off" placeholder="Gemini APIキー">
+    <label class="remember"><input type="checkbox" id="rememberApiKey">この端末にAPIキーを保存する</label>
     <div id="apiKeyError" class="error"></div>
     <div class="btns">
       <button class="primary" onclick="saveApiKey()">保存して始める</button>
@@ -167,11 +182,17 @@
         </div>
         <button class="linkbtn" onclick="openApiGate()">APIキーを変更</button>
       </div>
-      <p class="lead">やりたいことを入れると、AIが段階に分解。各段階から2分の一歩を出せます。</p>
+      <p class="lead">やりたいことを入れると、AIが段階に分解。各段階から最初の2分でできる一歩を出せます。</p>
 
       <div class="newgoal" id="newGoal">
-        <input type="text" id="goalInput" class="g-goal" placeholder="やりたいこと（例：就活を進めたい）">
-        <input type="text" id="goalDeadline" class="g-dl" placeholder="期限（任意）">
+        <div class="field g-goal">
+          <label class="field-label" for="goalInput">やりたいこと</label>
+          <input type="text" id="goalInput" placeholder="例：就活を進めたい">
+        </div>
+        <div class="field g-dl">
+          <label class="field-label" for="goalDeadline">期限（任意）</label>
+          <input type="text" id="goalDeadline" placeholder="例：今週金曜">
+        </div>
         <button class="primary" id="createBtn" onclick="genGoal()">作成</button>
       </div>
       <div id="createError" class="error"></div>
@@ -188,17 +209,17 @@
 
 <!-- Focus (最初の一歩＋タイマー) -->
 <div id="focus">
-  <div class="prog" id="prog"></div>
   <button class="quit" onclick="quitFocus()">やめる</button>
+  <div class="fs-task" id="fsTask"></div>
   <div class="stepnow" id="stepnow"></div>
   <div class="action" id="action"></div>
-  <div class="est" id="est"></div>
+  <div class="next-hint" id="nextHint"></div>
+  <div class="encouragement" id="encouragement"></div>
   <div class="timer" id="timer">02:00</div>
   <div class="timerlabel" id="timerlabel"></div>
   <div class="fbtns">
-    <button class="done-btn" onclick="nextStep(true)">できた → 次へ</button>
+    <button class="done-btn" onclick="nextStep(true)">できた ✓</button>
     <button class="add-btn" onclick="addMin()">＋1分</button>
-    <button class="skip-btn" onclick="nextStep(false)">スキップ</button>
   </div>
 </div>
 
@@ -206,11 +227,28 @@
 function esc(s){return (s||"").trim();}
 function $(id){return document.getElementById(id);}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function escapeAttr(s){return escapeHtml(s).replace(/`/g,"&#96;");}
+function setError(id, message){
+  const el=$(id);
+  if(!el) return;
+  if(!message){ el.textContent=""; el.classList.remove('show'); return; }
+  el.innerHTML='<span>'+escapeHtml(message)+'</span><button type="button" class="error-close" aria-label="エラーを閉じる" onclick="clearError(\''+id+'\')">×</button>';
+  el.classList.add('show');
+}
+function clearError(id){ const el=$(id); if(el){ el.textContent=""; el.classList.remove('show'); } }
+function parseJson(text){
+  let t=(text||"").trim();
+  t=t.replace(/^```[a-zA-Z]*\s*/,'').replace(/```\s*$/,'').trim();
+  const s=t.indexOf('{'), e=t.lastIndexOf('}');
+  if(s>=0 && e>s){ t=t.slice(s, e+1); }
+  return JSON.parse(t);
+}
 
 const API_KEY_STORAGE_KEY = "geminiApiKey";
 const GOALS_STORAGE_KEY = "firstStepGoals";
-const GEMINI_MODEL = "gemini-flash-latest";
+const GEMINI_MODEL = "gemini-3.5-flash";
 const DEBUG_MODE = new URLSearchParams(location.search).get("debug") === "1";
+const MEMO_TEMPLATE = "やったこと:\n分かったこと:\n困ったこと:";
 
 let goals = [];
 let currentId = null;
@@ -218,12 +256,42 @@ let openTodos = new Set();
 let newGoalMode = false;
 
 /* ---------- API key ---------- */
-function getApiKey(){ try{ return localStorage.getItem(API_KEY_STORAGE_KEY) || ""; }catch(e){ return ""; } }
-function setApiKeyError(m){ const b=$('apiKeyError'); b.textContent=m||""; b.classList.toggle('show',!!m); }
-function openApiGate(){ $('apiKeyInput').value=getApiKey(); setApiKeyError(""); $('apiGate').classList.add('show'); document.body.classList.remove('api-ready'); setTimeout(function(){$('apiKeyInput').focus();},0); }
+function getApiKey(){
+  try{
+    return sessionStorage.getItem(API_KEY_STORAGE_KEY) || localStorage.getItem(API_KEY_STORAGE_KEY) || "";
+  }catch(e){
+    try{ return localStorage.getItem(API_KEY_STORAGE_KEY) || ""; }catch(err){ return ""; }
+  }
+}
+function setApiKeyError(m){ setError('apiKeyError', m); }
+function openApiGate(){
+  $('apiKeyInput').value=getApiKey();
+  try{ $('rememberApiKey').checked=!!localStorage.getItem(API_KEY_STORAGE_KEY); }catch(e){ $('rememberApiKey').checked=false; }
+  setApiKeyError("");
+  $('apiGate').classList.add('show');
+  document.body.classList.remove('api-ready');
+  setTimeout(function(){$('apiKeyInput').focus();},0);
+}
 function closeApiGate(){ $('apiGate').classList.remove('show'); document.body.classList.add('api-ready'); }
-function saveApiKey(){ const k=esc($('apiKeyInput').value); if(!k){ setApiKeyError("Gemini APIキーを入力してください。"); return; } try{ localStorage.setItem(API_KEY_STORAGE_KEY,k); closeApiGate(); }catch(e){ setApiKeyError("APIキーの保存に失敗しました。"); } }
-function clearApiKey(){ try{ localStorage.removeItem(API_KEY_STORAGE_KEY); }catch(e){} $('apiKeyInput').value=""; openApiGate(); setApiKeyError("保存済みのキーを削除しました。"); }
+function saveApiKey(){
+  const k=esc($('apiKeyInput').value);
+  if(!k){ setApiKeyError("Gemini APIキーを入力してください。"); return; }
+  try{
+    sessionStorage.setItem(API_KEY_STORAGE_KEY,k);
+    if($('rememberApiKey').checked){ localStorage.setItem(API_KEY_STORAGE_KEY,k); }
+    else { localStorage.removeItem(API_KEY_STORAGE_KEY); }
+    closeApiGate();
+  }catch(e){
+    setApiKeyError("APIキーの保存に失敗しました。ブラウザの保存設定を確認してください。");
+  }
+}
+function clearApiKey(){
+  try{ sessionStorage.removeItem(API_KEY_STORAGE_KEY); localStorage.removeItem(API_KEY_STORAGE_KEY); }catch(e){}
+  $('apiKeyInput').value="";
+  $('rememberApiKey').checked=false;
+  openApiGate();
+  setApiKeyError("保存済みのキーを削除しました。");
+}
 function initApiGate(){ if(getApiKey()){ closeApiGate(); } else { openApiGate(); } }
 
 /* ---------- Gemini ---------- */
@@ -231,7 +299,7 @@ async function callGemini(promptText, options){
   const apiKey = getApiKey();
   if(!apiKey){ openApiGate(); throw new Error("Gemini APIキーが未保存です。"); }
   const body = { contents: [{ parts: [{ text: promptText }] }] };
-  if(options && options.json){ body.generationConfig = { responseMimeType: "application/json" }; }
+  if(options && options.json){ body.generationConfig = { response_mime_type: "application/json" }; }
   let res;
   try{
     res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + encodeURIComponent(apiKey), {
@@ -239,12 +307,57 @@ async function callGemini(promptText, options){
     });
   }catch(e){ throw new Error("通信に失敗しました。ネットワークを確認してください。"); }
   let data=null; try{ data=await res.json(); }catch(e){}
-  if(!res.ok){ const m=data&&data.error&&data.error.message?"（"+data.error.message+"）":""; throw new Error("Gemini APIエラー。キー・利用上限・通信を確認してください。"+m); }
+  if(!res.ok){
+    const rawMessage=data&&data.error&&data.error.message?data.error.message:"";
+    const m=rawMessage?"（"+rawMessage+"）":"";
+    const err=new Error("Gemini APIエラー。キー・利用上限・通信を確認してください。"+m);
+    const retryMatch=rawMessage.match(/retry in\s+([\d.]+)s/i);
+    if(retryMatch){ err.retryDelayMs=Math.ceil(parseFloat(retryMatch[1])*1000)+1000; }
+    if(data&&data.error&&Array.isArray(data.error.details)){
+      data.error.details.forEach(function(d){
+        if(d&&d.retryDelay){
+          const secMatch=String(d.retryDelay).match(/([\d.]+)s/);
+          if(secMatch){ err.retryDelayMs=Math.ceil(parseFloat(secMatch[1])*1000)+1000; }
+        }
+      });
+    }
+    throw err;
+  }
   const text = data&&data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts&&data.candidates[0].content.parts[0]&&data.candidates[0].content.parts[0].text;
-  if(!text){ throw new Error("Geminiから回答を取得できませんでした。"); }
+  if(!text){
+    const reason=data&&data.candidates&&data.candidates[0]&&data.candidates[0].finishReason;
+    throw new Error("Geminiから回答を取得できませんでした。"+(reason?"（finishReason: "+reason+"）":""));
+  }
   return text;
 }
 function calmError(detail){ return detail ? ("失敗しました："+detail) : "失敗しました。少し時間をおいて再度お試しください。"; }
+
+/* ---------- rate limiter (≤ RPM / 60s) + auto retry ---------- */
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+const RPM_LIMIT = 13; // 無料枠15/分に余裕を持たせる
+let _callTimes = [];
+async function rateGate(){
+  for(;;){
+    const now = Date.now();
+    _callTimes = _callTimes.filter(function(t){ return now - t < 60000; });
+    if(_callTimes.length < RPM_LIMIT){ _callTimes.push(now); return; }
+    await sleep(60000 - (now - _callTimes[0]) + 80);
+  }
+}
+async function callGeminiRL(prompt, opts, tries){
+  tries = tries || 0;
+  await rateGate();
+  try{
+    return await callGemini(prompt, opts);
+  }catch(e){
+    const msg = (e && e.message) || "";
+    if(tries < 3 && /429|RESOURCE_EXHAUSTED|quota|rate|exhaust/i.test(msg)){
+      await sleep(e.retryDelayMs || (8000 + tries*10000));
+      return callGeminiRL(prompt, opts, tries+1);
+    }
+    throw e;
+  }
+}
 
 /* ---------- persistence ---------- */
 function saveGoals(){ try{ localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify({goals:goals, currentId:currentId})); }catch(e){} }
@@ -261,9 +374,30 @@ function loadGoals(){
 }
 function uid(){ return "g"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
+function memoForPrompt(memo){
+  const lines=String(memo||"").split(/\r?\n/).map(function(line){return line.trim();}).filter(Boolean);
+  const useful=lines.filter(function(line){
+    return !/^やったこと[:：]\s*$/.test(line) &&
+           !/^分かったこと[:：]\s*$/.test(line) &&
+           !/^困ったこと[:：]\s*$/.test(line);
+  });
+  return useful.join("\n");
+}
+
 function normalizeTodos(raw){
   if(!Array.isArray(raw)) return null;
-  const c=raw.map(function(t){ return { title:esc(t&&t.title), note:esc(t&&t.note), done:!!(t&&t.done) }; }).filter(function(t){return t.title;});
+  const c=raw.map(function(t){
+    const o={ title:esc(t&&t.title), note:esc(t&&t.note), memo:esc(t&&t.memo), done:!!(t&&t.done) };
+    if(t&&t.firstStep){
+      const fs={ action:esc(t.firstStep.action), nextHint:esc(t.firstStep.nextHint), encouragement:esc(t.firstStep.encouragement) };
+      if(fs.action){ o.firstStep=fs; }
+    }
+    if(t&&Array.isArray(t.steps)){
+      const st=t.steps.map(function(s){ return {action:esc(s&&s.action), minutes:Math.max(1,parseInt(s&&s.minutes)||2)}; }).filter(function(s){return s.action;});
+      if(st.length){ o.steps=st; o.enc=esc(t.enc); }
+    }
+    return o;
+  }).filter(function(t){return t.title;});
   return c.length?c:[];
 }
 
@@ -279,8 +413,8 @@ function focusNewGoal(){ setNewGoal(true); }
 async function genGoal(){
   const goal = esc($('goalInput').value);
   const deadline = esc($('goalDeadline').value);
-  $('createError').classList.remove('show');
-  if(!goal){ $('createError').textContent="やりたいことを入力してください。"; $('createError').classList.add('show'); return; }
+  clearError('createError');
+  if(!goal){ setError('createError', "やりたいことを入力してください。"); return; }
   const ctx = deadline ? ("【補足情報】\n- 締切："+deadline+"\n\n") : "";
   const prompt =
 "あなたは、大きな「やりたいこと」を、達成までの大枠の段階（フェーズ／マイルストーン）に分ける支援コーチです。\n"+
@@ -299,8 +433,8 @@ async function genGoal(){
   const btn=$('createBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent="作成中...";
   try{
     if(DEBUG_MODE) $('prompt').value=prompt;
-    const text=await callGemini(prompt,{json:true});
-    let parsed; try{ parsed=JSON.parse(text); }catch(e){ throw new Error("JSONを読み込めませんでした。"); }
+    const text=await callGeminiRL(prompt,{json:true});
+    let parsed; try{ parsed=parseJson(text); }catch(e){ throw new Error("JSONを読み込めませんでした。もう一度試してください。"); }
     const todos=normalizeTodos(parsed&&parsed.todos);
     if(!todos||!todos.length){ throw new Error("回答の形式が合いませんでした。"); }
     const g={ id:uid(), title:goal, deadline:deadline, todos:todos };
@@ -310,7 +444,7 @@ async function genGoal(){
     newGoalMode=false; $('newGoal').style.display='none';
     saveGoals(); renderAll();
   }catch(e){
-    $('createError').textContent=calmError(e&&e.message); $('createError').classList.add('show');
+    setError('createError', calmError(e&&e.message));
   }finally{ btn.disabled=false; btn.textContent=old; }
 }
 
@@ -328,15 +462,16 @@ function renderAll(){ renderSidebar(); renderDetail(); }
 
 function renderSidebar(){
   const list=$('goalList');
-  if(!goals.length){ list.innerHTML='<div class="side-empty">まだありません。右上でやりたいことを作成してください。</div>'; return; }
+  if(!goals.length){ list.innerHTML='<div class="side-empty">まだありません。「新しいやりたいこと」から作成してください。</div>'; return; }
   list.innerHTML=goals.map(function(g){
     const sub=(g.deadline?("期限 "+escapeHtml(g.deadline)+" ・ "):"")+g.todos.length+"段階";
-    return '<div class="goal-item'+(g.id===currentId?' active':'')+'" data-sel="'+g.id+'">'+
-      '<div class="goal-main" data-sel="'+g.id+'">'+
+    const id=escapeAttr(g.id);
+    return '<div class="goal-item'+(g.id===currentId?' active':'')+'" data-sel="'+id+'">'+
+      '<div class="goal-main" data-sel="'+id+'">'+
         '<div class="goal-title">'+escapeHtml(g.title)+'</div>'+
         '<div class="goal-sub">'+sub+'</div>'+
       '</div>'+
-      '<button class="goal-del" data-del="'+g.id+'" title="削除">🗑</button>'+
+      '<button class="goal-del" data-del="'+id+'" title="削除" aria-label="'+escapeAttr(g.title)+'を削除">🗑</button>'+
     '</div>';
   }).join("");
   list.querySelectorAll('[data-sel]').forEach(function(el){ el.addEventListener('click',function(e){ if(e.target.closest('[data-del]'))return; selectGoal(el.getAttribute('data-sel')); }); });
@@ -350,16 +485,20 @@ function renderDetail(){
   let html='<div class="detail-title">'+escapeHtml(g.title)+'</div><div class="detail-sub">'+sub+'</div>';
   html+='<div class="todo-list">'+g.todos.map(function(t,i){
     const open=openTodos.has(i);
+    const idx=escapeAttr(i);
     return '<div class="todo-card'+(t.done?' done':'')+(open?' open':'')+'">'+
       '<div class="todo-head">'+
-        '<input type="checkbox" class="todo-check" data-done="'+i+'"'+(t.done?' checked':'')+'>'+
+        '<input type="checkbox" class="todo-check" data-done="'+idx+'" aria-label="'+escapeAttr(t.title)+'を完了にする"'+(t.done?' checked':'')+'>'+
         '<span class="todo-num">'+(i+1)+'</span>'+
-        '<h3 data-toggle="'+i+'">'+escapeHtml(t.title)+'</h3>'+
-        '<button class="todo-toggle" data-toggle="'+i+'" aria-label="詳細">▶</button>'+
+        '<h3 data-toggle="'+idx+'">'+escapeHtml(t.title)+'</h3>'+
+        '<button class="todo-toggle" data-toggle="'+idx+'" aria-label="'+escapeAttr(t.title)+'の詳細">▶</button>'+
       '</div>'+
       '<div class="todo-details">'+
         '<p class="todo-note">'+escapeHtml(t.note||"この段階から着手します。")+'</p>'+
-        '<div><button class="ghost" data-first="'+i+'">最初の一歩を出す</button></div>'+
+        '<label class="memo-label" for="memo-'+idx+'">メモ</label>'+
+        '<textarea id="memo-'+idx+'" class="todo-memo" data-memo="'+idx+'">'+escapeHtml(t.memo||MEMO_TEMPLATE)+'</textarea>'+
+        '<div><button class="ghost" data-first="'+idx+'">'+(t.firstStep?'最初の一歩を見る':'最初の一歩を出す')+'</button>'+
+        (t.firstStep?'<button class="dev-reset" data-reset-first="'+idx+'" title="生成済みFirstStepをリセット">リセット</button>':'')+'</div>'+
       '</div>'+
     '</div>';
   }).join("")+'</div>';
@@ -367,45 +506,108 @@ function renderDetail(){
 
   d.querySelectorAll('[data-toggle]').forEach(function(el){ el.addEventListener('click',function(){ const i=Number(el.getAttribute('data-toggle')); if(openTodos.has(i))openTodos.delete(i); else openTodos.add(i); const c=el.closest('.todo-card'); if(c)c.classList.toggle('open'); }); });
   d.querySelectorAll('[data-done]').forEach(function(inp){ inp.addEventListener('change',function(){ const i=Number(inp.getAttribute('data-done')); const gg=currentGoal(); if(gg&&gg.todos[i]){ gg.todos[i].done=inp.checked; saveGoals(); const c=inp.closest('.todo-card'); if(c)c.classList.toggle('done',inp.checked); renderSidebar(); } }); });
-  d.querySelectorAll('[data-first]').forEach(function(btn){ btn.addEventListener('click',function(){ const i=Number(btn.getAttribute('data-first')); const gg=currentGoal(); if(!gg||!gg.todos[i])return; const old=btn.textContent; btn.disabled=true; btn.textContent="考え中..."; genFirstStep(gg.todos[i].title, gg.deadline).finally(function(){ btn.disabled=false; btn.textContent=old; }); }); });
+  d.querySelectorAll('[data-memo]').forEach(function(area){ area.addEventListener('input',function(){ const i=Number(area.getAttribute('data-memo')); const gg=currentGoal(); if(gg&&gg.todos[i]){ gg.todos[i].memo=area.value; saveGoals(); } }); });
+  d.querySelectorAll('[data-first]').forEach(function(btn){ btn.addEventListener('click',function(){ const i=Number(btn.getAttribute('data-first')); const gg=currentGoal(); if(!gg||!gg.todos[i])return; const todo=gg.todos[i]; if(todo.firstStep){ showFirstStep(todo, gg.title); return; } const old=btn.textContent; btn.disabled=true; btn.textContent="考え中..."; genFirstStep(gg, i).finally(function(){ btn.disabled=false; btn.textContent=old; renderDetail(); }); }); });
+  d.querySelectorAll('[data-reset-first]').forEach(function(btn){ btn.addEventListener('click',function(){ const i=Number(btn.getAttribute('data-reset-first')); const gg=currentGoal(); if(!gg||!gg.todos[i])return; if(!confirm("このFirstStepをリセットしますか？"))return; delete gg.todos[i].firstStep; saveGoals(); renderDetail(); }); });
 }
 
 /* ---------- first step (JSON steps -> focus) ---------- */
-let STEPS=[], fsIdx=0, remaining=0, tickId=null, fsMeta={};
+let STEPS=[], fsIdx=0, remaining=0, tickId=null, fsMeta={}, fsLabel="";
 
-async function genFirstStep(task, deadline){
-  let ctx="- タスク："+task+"\n"; if(deadline) ctx+="- 締切："+deadline+"\n";
-  const prompt=
-"あなたは、先延ばしに悩む人の『最初の一歩』を作る専門コーチです。\n"+
-"与えられるのは、ある『段階（フェーズ）』またはタスクです。それに“今すぐ2分以内に着手できる”ところまで具体化し、その段階に取りかかるための軽い手順に落とします。\n\n"+
+function previousContext(goal, todoIndex){
+  if(!goal || !Array.isArray(goal.todos) || todoIndex<=0) return "";
+  const prev=goal.todos.slice(0,todoIndex).map(function(t,i){
+    let line=(i+1)+". "+esc(t.title);
+    if(t.note) line+=" / 説明: "+esc(t.note);
+    const memo=memoForPrompt(t.memo);
+    if(memo) line+=" / ユーザーメモ: "+memo.slice(0,220);
+    if(t.done) line+=" / 状態: 完了";
+    if(t.firstStep&&t.firstStep.action) line+=" / 提案済みFirstStep: "+esc(t.firstStep.action);
+    if(t.firstStep&&t.firstStep.nextHint) line+=" / 次ヒント: "+esc(t.firstStep.nextHint);
+    return line;
+  });
+  return prev.length ? prev.join("\n") : "";
+}
+
+function buildStepsPrompt(task, deadline, goalTitle, phaseNote, currentMemo, prevContext){
+  let ctx="";
+  if(goalTitle) ctx+="- 全体の目標："+goalTitle+"\n";
+  if(prevContext) ctx+="- 前の段階（参考。実行済みとは限らない）:\n"+prevContext+"\n";
+  ctx+="- 今取り組む段階："+task+"\n";
+  if(phaseNote) ctx+="- この段階の説明："+phaseNote+"\n";
+  currentMemo=memoForPrompt(currentMemo);
+  if(currentMemo) ctx+="- この段階のユーザーメモ："+currentMemo.slice(0,220)+"\n";
+  if(deadline) ctx+="- 締切："+deadline+"\n";
+  return "あなたは、先延ばしに悩む人の『最初の一歩』を作る専門コーチです。\n"+
+"与えられた段階（フェーズ）に、今すぐ2分だけ取り組める『最初の一歩』を1つだけ作ります。\n"+
+"目的は、タスクを完了させることではなく、次に続けやすい小さな痕跡を残すことです。\n\n"+
 "【入力】\n"+ctx+"\n"+
 "【最初の一歩の条件（厳守）】\n"+
-"1. すべてのステップは「動詞＋具体物」で書く（例：床の雑誌を1冊だけ棚に戻す）。\n"+
-"2. 最初のステップ(steps[0])は、物理的に2分以内で着手できる最小の行動にする（完了不要、始められればよい）。\n"+
-"3. 「計画する／整理する／考える／準備する／調べる」等の抽象語だけのステップは禁止。必ず具体的な操作・対象にする。\n"+
-"4. 締切があれば踏まえる。\n\n"+
-"【内部手順】タスクを実行順に4〜6ステップへ分解→各ステップを自己点検（動詞＋具体物か／最初の一歩は2分で着手可能か）し満たさなければ書き直す→最終結果のみ出力。\n\n"+
+"1. この段階の説明を最優先する。段階名だけを見て、目標設定・計画作成・現状を書く作業へ戻らない。\n"+
+"2. 前の段階は流れをつかむ参考情報として使う。ただし、ユーザーが実行済みとは限らないので結果を断定しない。\n"+
+"3. 入力に明示されていない対象・分野・方法・教材・ツール・弱点・結果を推測しない。\n"+
+"4. 前のFirstStepは提案であり、実行結果ではない。そこからユーザーの状態・弱点・好み・進捗を断定しない。\n"+
+"5. ユーザーメモは実際の観察・結果として優先して参考にする。ただし、メモにないことは推測しない。\n"+
+"6. 対象が未確定なら、特定の対象に進むのではなく、候補を1つ選ぶ・候補を1つ見つける・前回メモがあれば1つ拾う一歩にする。\n"+
+"7. ただし『目標を書く』『計画を立てる』に戻りすぎず、今の段階に必要な対象選びに限定する。\n"+
+"8. stepは2分で区切れる単一動作にする。『Aして、Bして、Cする』のように複数動作を連結しない。\n"+
+"9. stepは『まずは〜してみましょう』のような、提案しながら寄り添う口調にする。\n"+
+"10. stepは、この段階の本来の作業列に実際に入る行動にする。準備の準備ではなく、成果に近い入口へ進める。\n"+
+"11. stepは『動詞＋具体物＋小さな到達条件』で書く。画面・紙・ファイル上に1語、1文、1項目、1件などの痕跡が残る行動にする。\n"+
+"12. 『開くだけ』『眺めるだけ』は小さすぎるので避ける。ただし、開いた後に検索語を入れる、1語だけ書く、1件だけ貼る等ならよい。\n"+
+"13. 『検索して読む』『調べてまとめる』『資料を完成させる』のような大きい作業は禁止。調べる場合は、検索語を1つ入力する、結果タイトルを1つ貼る等に絞る。\n"+
+"14. nextHintはstepが終わった後の薄いヒント。必須作業ではなく、『次は〜してみると続けやすいです』のように短く書く。\n"+
+"15. nextHintも小さな単一動作にする。stepより少し先へ進むが、急かさない。\n"+
+"16. 締切があれば踏まえる。\n\n"+
+"【粒度の例】\n"+
+"- 対象が明確な場合：『まずはブラウザで「SPI 模擬試験 無料」と検索して、受験できそうなサイトを1つ開いてみましょう』\n"+
+"- 対象が未確定な場合：『まずは参考書の目次を開き、今日取り組む分野を1つだけ丸で囲んでみましょう』\n"+
+"- 前回結果が未確定な場合：『まずは前回のメモがあれば、気になる項目を1つだけノートに写してみましょう』\n"+
+"- 就活調査で業界が未確定な場合：『まずは求人サイトの検索欄に、気になる業界名を1つだけ入れてみましょう』\n"+
+"- 小さすぎるstep：『Googleドキュメントを開く』\n"+
+"- 決め打ちしすぎるstep：『まずは数学の公式を1つ書き写してみましょう』（数学が対象と明示されていない場合）\n"+
+"- 大きすぎるstep：『記事を読んで特徴を3つメモする』\n\n"+
+"【内部手順】この段階の説明から本来の作業列を推定し、その最初の2分に入る候補を考える。未確定の対象・分野・方法を勝手に補っていないか確認する。最も着手しやすい1つを選び、『説明文からズレていないか／決め打ちしていないか／2分で区切れるか／単一動作か／小さな痕跡が残るか／口調が寄り添っているか』を自己点検して整えてから出力。\n\n"+
 "【出力形式】次のJSONのみ。コードブロックや前置きは付けない。\n"+
-'{ "steps": [ { "action": "具体的な行動", "minutes": 整数(最初は2) }, ... ], "encouragement": "着手を後押しする短い一言" }';
+'{ "step": "まずは具体的な最初の一歩をしてみましょう", "nextHint": "次は小さな続きの行動をしてみると続けやすいです", "minutes": 2, "encouragement": "着手を後押しする短い一言" }';
+}
+
+function showFirstStep(todo, goalTitle){
+  fsLabel = (goalTitle ? goalTitle + " ／ " : "") + todo.title;
+  const fs=todo.firstStep||{};
+  STEPS=[{ action:esc(fs.action), minutes:2, nextHint:esc(fs.nextHint) }];
+  fsMeta={encouragement:esc(fs.encouragement)};
+  fsIdx=0;
+  startFocus();
+}
+
+/* 押したときにその場で生成（オンデマンド） */
+async function genFirstStep(goal, todoIndex){
   try{
-    if(DEBUG_MODE) $('prompt').value=prompt;
-    const text=await callGemini(prompt,{json:true});
-    let parsed; try{ parsed=JSON.parse(text); }catch(e){ throw new Error("JSONを読み込めませんでした。"); }
-    const steps=(Array.isArray(parsed&&parsed.steps)?parsed.steps:[]).map(function(s){ return {action:esc(s&&s.action), minutes:Math.max(1,parseInt(s&&s.minutes)||2)}; }).filter(function(s){return s.action;});
-    if(!steps.length){ throw new Error("回答の形式が合いませんでした。"); }
-    STEPS=steps; fsMeta={encouragement:esc(parsed&&parsed.encouragement)}; fsIdx=0; startFocus();
+    const todo=goal.todos[todoIndex];
+    fsLabel = (goal.title ? goal.title + " ／ " : "") + todo.title;
+    const text=await callGeminiRL(buildStepsPrompt(todo.title, goal.deadline, goal.title, todo.note, todo.memo, previousContext(goal, todoIndex)), {json:true});
+    let parsed; try{ parsed=parseJson(text); }catch(e){ throw new Error("JSONを読み込めませんでした。もう一度試してください。"); }
+    // 新形式 {step,nextHint} と旧形式 {steps:[...]} の両方に対応、必ず1つに絞る
+    let action = esc(parsed && parsed.step);
+    let nextHint = esc(parsed && parsed.nextHint);
+    if(!action && parsed && Array.isArray(parsed.steps) && parsed.steps[0]){ action=esc(parsed.steps[0].action); }
+    if(!action){ throw new Error("回答の形式が合いませんでした。"); }
+    todo.firstStep={ action:action, nextHint:nextHint, encouragement:esc(parsed&&parsed.encouragement) };
+    saveGoals();
+    showFirstStep(todo, goal.title);
   }catch(e){
-    $('createError').textContent=calmError(e&&e.message); $('createError').classList.add('show');
+    setError('createError', calmError(e&&e.message));
   }
 }
 
-function startFocus(){ $('focus').classList.add('show'); showStep(); }
+function startFocus(){ $('fsTask').textContent = fsLabel || ""; $('focus').classList.add('show'); showStep(); }
 function showStep(){
   const s=STEPS[fsIdx];
-  $('prog').textContent="ステップ "+(fsIdx+1)+" / "+STEPS.length;
-  $('stepnow').textContent=fsIdx===0?"▶ 最初の一歩（これだけやればOK）":"▶ 次の一歩";
+  $('stepnow').textContent="▶ 最初の一歩（2分だけ）";
   $('action').textContent=s.action;
-  $('est').textContent="目安 約"+s.minutes+"分（まずは着手できればOK）";
+  $('nextHint').textContent=s.nextHint || "";
+  $('encouragement').textContent=fsMeta.encouragement || "";
   setTimer(s.minutes*60);
 }
 function setTimer(sec){
