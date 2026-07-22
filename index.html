@@ -138,10 +138,36 @@
   .skip-btn{background:transparent; color:#8a93a6; border:1px solid #2a3346}
   #focus .quit{position:absolute; top:16px; right:18px; background:transparent; color:#8a93a6; border:1px solid #2a3346; padding:7px 12px; font-size:12px}
 
+  /* mobile drawer (hamburger) */
+  .mobile-bar{display:none}
+  .side-overlay{display:none; position:fixed; inset:0; background:rgba(15,20,31,.42); z-index:65}
+  .side-close{display:none}
+
   @media (max-width:760px){
     body.api-ready .app-shell{flex-direction:column; min-height:auto}
-    .sidebar{width:auto; border-right:none; border-bottom:1px solid var(--line); max-height:38vh}
-    .main{padding:18px 16px 56px}
+    .mobile-bar{
+      display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:40;
+      background:var(--bg); padding:8px 0 10px; margin:0 0 6px; border-bottom:1px solid var(--line);
+    }
+    .hamburger{
+      background:transparent; color:var(--ink); font-size:20px; line-height:1;
+      padding:6px 10px; border:1px solid var(--line); border-radius:2px;
+    }
+    .hamburger:hover{background:var(--hover)}
+    .mobile-bar-title{font-size:15px; font-weight:700}
+    .sidebar{
+      position:fixed; top:0; left:0; bottom:0; height:100dvh; width:82vw; max-width:300px;
+      max-height:none; border-right:1px solid var(--line); border-bottom:none;
+      transform:translateX(-100%); transition:transform .25s ease; z-index:70;
+      box-shadow:2px 0 18px rgba(0,0,0,.14);
+    }
+    body.sidebar-open .sidebar{transform:translateX(0)}
+    body.sidebar-open .side-overlay{display:block}
+    .side-close{
+      display:block; align-self:flex-end; background:transparent; color:var(--sub);
+      font-size:20px; line-height:1; padding:2px 8px; margin:-4px -4px 4px 0;
+    }
+    .main{padding:12px 16px 56px}
   }
 </style>
 </head>
@@ -164,8 +190,12 @@
 </div>
 
 <div id="appShell" class="app-shell">
+  <!-- overlay behind the mobile drawer -->
+  <div id="sideOverlay" class="side-overlay" onclick="closeSidebar()"></div>
+
   <!-- Sidebar: list of やりたいこと -->
   <aside class="sidebar">
+    <button class="side-close" onclick="closeSidebar()" aria-label="メニューを閉じる">×</button>
     <div class="brand">FirstStep</div>
     <button class="newbtn" onclick="focusNewGoal()">＋ 新しいやりたいこと</button>
     <div class="side-label">やりたいこと</div>
@@ -175,6 +205,10 @@
   <!-- Main: new-goal input + selected goal's TODO -->
   <main class="main">
     <div class="main-inner">
+      <div class="mobile-bar">
+        <button class="hamburger" onclick="openSidebar()" aria-label="メニューを開く">☰</button>
+        <span class="mobile-bar-title">FirstStep</span>
+      </div>
       <div class="top-row">
         <div>
           <h1 class="hero">FirstStep</h1>
@@ -408,7 +442,12 @@ function setNewGoal(on){
   $('createError').classList.remove('show');
   if(on){ currentId=null; $('goalInput').value=""; $('goalDeadline').value=""; renderSidebar(); renderDetail(); setTimeout(function(){ $('goalInput').focus(); },0); }
 }
-function focusNewGoal(){ setNewGoal(true); }
+function focusNewGoal(){ closeSidebar(); setNewGoal(true); }
+
+/* ---------- mobile drawer ---------- */
+function openSidebar(){ document.body.classList.add('sidebar-open'); }
+function closeSidebar(){ document.body.classList.remove('sidebar-open'); }
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSidebar(); });
 
 async function genGoal(){
   const goal = esc($('goalInput').value);
@@ -448,7 +487,7 @@ async function genGoal(){
   }finally{ btn.disabled=false; btn.textContent=old; }
 }
 
-function selectGoal(id){ newGoalMode=false; $('newGoal').style.display='none'; currentId=id; openTodos=new Set(); saveGoals(); renderAll(); }
+function selectGoal(id){ closeSidebar(); newGoalMode=false; $('newGoal').style.display='none'; currentId=id; openTodos=new Set(); saveGoals(); renderAll(); }
 function deleteGoal(id){
   if(!confirm("このやりたいことを削除しますか？")) return;
   goals=goals.filter(function(g){return g.id!==id;});
